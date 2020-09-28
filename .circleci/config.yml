@@ -40,11 +40,11 @@ jobs:
         - run: aws s3 rm "s3://${OldPipelineID}" --recursive
         - run: aws cloudformation delete-stack --stack-name "${PreviousPipelineID}"
 
-  workflows:
-    default:
-      jobs:
-        - create_and_deploy_front_end
-        - get_last_deployment_id
-        - promote_to_production
+workflows:
+  default:
+    jobs:
+      - create_and_deploy_front_end
+      - get_last_deployment_id
+      - promote_to_production
             #requires: [create_and_deploy_front_end]
-        - clean_up_old_front_end
+      - clean_up_old_front_end
