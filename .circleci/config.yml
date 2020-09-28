@@ -1,6 +1,5 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-<<<<<<< HEAD
+
 jobs:
   create_and_deploy_front_end:
     docker:
@@ -15,11 +14,13 @@ jobs:
       - run: aws s3 sync . s3://"${CIRCLE_WORKFLOW_ID}" --delete
 
   get_last_deployment_id:
+    docker:
+      - image: amazon/aws-cli
     steps:
       - run: |
-        aws cloudformation \
-        list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
-        --no-paginate --output text
+          aws cloudformation \
+          list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+            --no-paginate --output text
 
   promote_to_production:
     docker:
@@ -33,9 +34,11 @@ jobs:
             --parameter-overrides PipelineID="${CIRCLE_WORKFLOW_ID}"
 
   clean_up_old_front_end:
-    -run: |
-      aws s3 rm "s3://${OldPipelineID}" --recursive
-      aws cloudformation delete-stack --stack-name "${PreviousPipelineID}"
+    docker:
+      - image: amazon/aws-cli
+    steps:
+        -run: aws s3 rm "s3://${OldPipelineID}" --recursive
+        -run: aws cloudformation delete-stack --stack-name "${PreviousPipelineID}"
 
   workflows:
     default:
@@ -46,16 +49,3 @@ jobs:
             requires: 
               - create_and_deploy_front_end
         - clean_up_old_front_end
-=======
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
-workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
-    jobs:
-      - welcome/run
->>>>>>> 725c83bf29fd3f237ec9386c9598af819c96d012
