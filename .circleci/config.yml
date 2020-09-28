@@ -37,8 +37,8 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
-        -run: aws s3 rm "s3://${OldPipelineID}" --recursive
-        -run: aws cloudformation delete-stack --stack-name "${PreviousPipelineID}"
+        - run: aws s3 rm "s3://${OldPipelineID}" --recursive
+        - run: aws cloudformation delete-stack --stack-name "${PreviousPipelineID}"
 
   workflows:
     default:
